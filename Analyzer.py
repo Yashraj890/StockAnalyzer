@@ -45,29 +45,41 @@ workbook = Workbook()
 headers = ['Company','Symbol']
 CompaniesMapped = 0
 CompaniesUnMapped = 0
+
+# let's iterate the unique sectors
 for sector in df['Sector'].unique():
     print(sector)
+    # check if the sector is not null or empty
     if sector is not None:
         worksheet = workbook.create_sheet(sector)
         worksheet.title = sector
         worksheet.append(headers)
         currentSector = sector
         filteredDf = df.query("Sector == @currentSector")
+        # let's iterate the companies belonging to currently iterated sector
         for company in filteredDf['Company Name'].unique():
             
+            # let's try to first match the whole company name
             CompanySymbolfilteredDf = CompanySymboldf.query("Company == @company")
             
+            # still if our dataframe is empty - as the company name didn't the match
+            # Hence, now try with appending the "Limited" keyword
             if CompanySymbolfilteredDf.empty:
                 companylimited = str(company) + ' Limited'
                 CompanySymbolfilteredDf = CompanySymboldf.query("Company == @companylimited")
 
+            # still if our dataframe is empty - as the company name didn't the match
+            # Hence, now try with appending the " (I) Limited" keyword
             if CompanySymbolfilteredDf.empty:
                 companyIlimited = str(company) + ' (I) Limited'
                 CompanySymbolfilteredDf = CompanySymboldf.query("Company == @companyIlimited")
 
+            # still if our dataframe is empty - as the company name didn't the match
+            # Hence, now try with contains method which is available as a part of string comparision
             if CompanySymbolfilteredDf.empty:
                 CompanySymbolfilteredDf = CompanySymboldf[CompanySymboldf['Company'].str.contains(company)]
 
+            # Now if we don't have empty dataframe - which implies that we found the company's symbol 
             if not CompanySymbolfilteredDf.empty:
                 CompaniesMapped = CompaniesMapped + 1
                 worksheet.append([company, CompanySymbolfilteredDf['Symbol'].values[0]])
