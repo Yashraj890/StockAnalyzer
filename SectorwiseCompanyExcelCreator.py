@@ -65,7 +65,7 @@ for sector in df['Sector'].unique():
     SectorWisefilepath = SectorWisefilepath + currentSector + '.xlsx'
 
     # let's remove the default sheet from the workbook before saving
-    workbook.remove_sheet('sheet1')
+    #workbook.remove_sheet('Sheet1')
 
     # Let's save the workbook
     workbook.save(SectorWisefilepath)
